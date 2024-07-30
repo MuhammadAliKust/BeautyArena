@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../application/cart_provider.dart';
 import '../../../application/user_provider.dart';
+import '../review_order/review_order_summary.dart';
 import '../shipping_address_edit_screen/shipping_address_edit_view.dart';
 import '../shipping_address_screen/shipping_address_view.dart';
 import 'layout/body.dart';
@@ -134,7 +135,7 @@ class CartView extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ShippingAddressView()));
+                            builder: (context) => ReviewOrderSummaryView()));
                   },
                   child: Container(
                     height: 75,
