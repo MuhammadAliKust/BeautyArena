@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:beauty_arena_app/application/discount_provider.dart';
 import 'package:beauty_arena_app/infrastructure/services/ad.dart';
 import 'package:beauty_arena_app/presentation/views/home_screen/layout/widgets/category_widget.dart';
 import 'package:beauty_arena_app/presentation/views/home_screen/layout/widgets/poster.dart';
@@ -76,49 +77,54 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   @override
   void initState() {
     var user = Provider.of<UserProvider>(context, listen: false);
+    var discount = Provider.of<DiscountProvider>(context, listen: false);
     getTime();
-    AdServices()
-        .getAllAds(context, user.getUserDetails()!.data!.token.toString())
-        .then((value) {
-      showDialog(
-          context: context,
-          barrierColor: Colors.black.withOpacity(0.7),
-
-
-          builder: (context) {
-            return AlertDialog(
-              backgroundColor: Colors.transparent,
-              contentPadding: EdgeInsets.zero,
-              elevation: 0,
-              content: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: CachedNetworkImage(
-                      imageUrl: value.data![0].image.toString(),
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) => Image.asset(
-                        'assets/images/user_ph.jpeg',
-                        fit: BoxFit.cover,
-
-                      ),
-                      errorWidget: (context, url, error) => Image.asset(
-                        'assets/images/user_ph.jpeg',
-
-                        fit: BoxFit.cover,
+    if (discount.getDiscountProvider() == true) {
+      AdServices()
+          .getAllAds(context, user.getUserDetails()!.data!.token.toString())
+          .then((value) {
+        discount.saveDiscountProvider(false);
+        showDialog(
+            context: context,
+            barrierColor: Colors.black.withOpacity(0.7),
+            builder: (context) {
+              return AlertDialog(
+                backgroundColor: Colors.transparent,
+                contentPadding: EdgeInsets.zero,
+                elevation: 0,
+                content: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: value.data![0].image.toString(),
+                        fit: BoxFit.fill,
+                        placeholder: (context, url) => Image.asset(
+                          'assets/images/user_ph.jpeg',
+                          fit: BoxFit.cover,
+                        ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          'assets/images/user_ph.jpeg',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(onPressed: () {
-                    Navigator.pop(context);
-                  }, icon: Icon(CupertinoIcons.clear_circled,color: Colors.white,))
-                ],
-              ),
-            );
-          });
-    });
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          CupertinoIcons.clear_circled,
+                          color: Colors.white,
+                        ))
+                  ],
+                ),
+              );
+            });
+      });
+    }
     // TODO: implement initState
     super.initState();
   }
@@ -185,19 +191,15 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                               height: 230,
                                               viewportFraction: 1,
                                               enableInfiniteScroll: false),
-                                          items: _localListing
-                                              .data!
-                                              .poster!
+                                          items: _localListing.data!.poster!
                                               .map((i) {
                                             return Builder(
                                               builder: (BuildContext context) {
                                                 return PosterWidget(
                                                     model: _localListing
-                                                            .data!
-                                                            .poster![
+                                                            .data!.poster![
                                                         _localListing
-                                                            .data!
-                                                            .poster!
+                                                            .data!.poster!
                                                             .indexOf(i)]);
                                               },
                                             );
@@ -207,9 +209,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                     ),
                                 const SizedBox(height: 20),
                                 if (_localListing
-                                    .data!
-                                    .categorySlider!
-                                    .isNotEmpty)
+                                    .data!.categorySlider!.isNotEmpty)
                                   Column(
                                     children: [
                                       Padding(
@@ -261,9 +261,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                         height: 170,
                                         child: ListView.builder(
                                             itemCount: _localListing
-                                                .data!
-                                                .categorySlider!
-                                                .length,
+                                                .data!.categorySlider!.length,
                                             scrollDirection: Axis.horizontal,
                                             itemBuilder: (context, i) {
                                               return Row(
@@ -386,9 +384,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                   ),
                                 const SizedBox(height: 10),
                                 if (_localListing
-                                    .data!
-                                    .lastestProduct!
-                                    .isNotEmpty)
+                                    .data!.lastestProduct!.isNotEmpty)
                                   Column(
                                     children: [
                                       Padding(
@@ -446,15 +442,12 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 7),
                                             itemCount: _localListing
-                                                .data!
-                                                .lastestProduct!
-                                                .length,
+                                                .data!.lastestProduct!.length,
                                             itemBuilder:
                                                 (BuildContext context, int i) {
                                               return ProductWidget(
                                                   model: _localListing
-                                                      .data!
-                                                      .lastestProduct![i],
+                                                      .data!.lastestProduct![i],
                                                   categoryID: _localListing
                                                       .data!
                                                       .lastestProduct![i]
@@ -467,9 +460,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                   ),
                                 const SizedBox(height: 20),
                                 if (_localListing
-                                    .data!
-                                    .topSellingProduct!
-                                    .isNotEmpty)
+                                    .data!.topSellingProduct!.isNotEmpty)
                                   Column(
                                     children: [
                                       Padding(
@@ -526,15 +517,12 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                                 const BouncingScrollPhysics(),
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 7),
-                                            itemCount: _localListing
-                                                .data!
-                                                .topSellingProduct!
-                                                .length,
+                                            itemCount: _localListing.data!
+                                                .topSellingProduct!.length,
                                             itemBuilder:
                                                 (BuildContext context, int i) {
                                               return ProductWidget(
-                                                  model: _localListing
-                                                      .data!
+                                                  model: _localListing.data!
                                                       .topSellingProduct![i],
                                                   categoryID: _localListing
                                                       .data!
@@ -553,16 +541,12 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                     .getRemoteConfig()!
                                     .couponSection)
                                   if (_localListing
-                                      .data!
-                                      .cuoponSlider!
-                                      .isNotEmpty)
+                                      .data!.cuoponSlider!.isNotEmpty)
                                     CarouselSlider(
                                       options: CarouselOptions(
                                           height: 300,
                                           enableInfiniteScroll: false),
-                                      items: _localListing
-                                          .data!
-                                          .cuoponSlider!
+                                      items: _localListing.data!.cuoponSlider!
                                           .map((i) {
                                         return Builder(
                                           builder: (BuildContext context) {
@@ -598,11 +582,9 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                                           BorderRadius.circular(
                                                               8),
                                                       child: CachedNetworkImage(
-                                                        imageUrl:
-                                                            _localListing
-                                                                .data!
-                                                                .cuoponSlider!
-                                                                .toString(),
+                                                        imageUrl: _localListing
+                                                            .data!.cuoponSlider!
+                                                            .toString(),
                                                         width: MediaQuery.of(
                                                                 context)
                                                             .size
@@ -641,9 +623,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                     .getRemoteConfig()!
                                     .featuredSection)
                                   if (_localListing
-                                      .data!
-                                      .featuredProduct!
-                                      .isNotEmpty)
+                                      .data!.featuredProduct!.isNotEmpty)
                                     Column(
                                       children: [
                                         Padding(
@@ -700,15 +680,12 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 7),
                                             itemCount: _localListing
-                                                .data!
-                                                .featuredProduct!
-                                                .length,
+                                                .data!.featuredProduct!.length,
                                             itemBuilder:
                                                 (BuildContext context, int i) {
                                               return FeaturedProducts(
                                                 model: _localListing
-                                                    .data!
-                                                    .featuredProduct![i],
+                                                    .data!.featuredProduct![i],
                                               );
                                             }),
                                       ],

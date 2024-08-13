@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'application/discount_provider.dart';
 import 'firebase_options.dart';
 import 'application/app_state.dart';
 import 'application/bottom_index.dart';
@@ -70,6 +71,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => BottomIndexProvider()),
       ChangeNotifierProvider(create: (_) => SearchProviders()),
       ChangeNotifierProvider(create: (_) => UserProvider()),
+      ChangeNotifierProvider(create: (_) => DiscountProvider()),
       ChangeNotifierProvider(create: (_) => AppState()),
       ChangeNotifierProvider(create: (_) => CartProvider()),
     ],
@@ -155,7 +157,12 @@ class _MyAppState extends State<MyApp> {
 
       theme: ThemeData(
         fontFamily: 'Poppins',
+        appBarTheme: AppBarTheme(
+          iconTheme: IconThemeData(color: Colors.white),
 
+        ),
+        scaffoldBackgroundColor: Colors.white,
+useMaterial3: false,
         primarySwatch: Colors.blue,
       ),
       home: SplashView(),

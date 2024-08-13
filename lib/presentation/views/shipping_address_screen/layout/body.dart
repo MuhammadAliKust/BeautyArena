@@ -26,7 +26,9 @@ import '../../shopping_cart_done_screen/shopping_cart_done_view.dart';
 import '../shipping_address_view.dart';
 
 class ShippingAddressViewBody extends StatefulWidget {
-  const ShippingAddressViewBody({Key? key}) : super(key: key);
+  final num discount;
+
+  const ShippingAddressViewBody({super.key, required this.discount});
 
   @override
   State<ShippingAddressViewBody> createState() =>
@@ -92,7 +94,7 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    height: 260,
+                    height: 300,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
@@ -202,7 +204,7 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
                         ),
                         Divider(),
                         Padding(
-                          padding: const EdgeInsets.only(left: 15, right: 15),
+                          padding: const EdgeInsets.only(left: 15, right: 0),
                           child: Column(
                             children: [
                               InkWell(
@@ -226,13 +228,15 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
                                         ),
                                       ],
                                     ),
-                                    Icon(
-                                      isPickUpEnabled
-                                          ? Icons.radio_button_checked
-                                          : Icons.radio_button_off,
-                                      size: 18,
-                                      color: FrontEndConfigs.kPrimaryColor,
-                                    )
+                                    Transform.scale(
+                                      scale: 0.6,
+                                      child: CupertinoSwitch(
+                                          value: isPickUpEnabled,
+                                          onChanged: (val) {
+                                            isPickUpEnabled = val;
+                                            setState(() {});
+                                          }),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -257,6 +261,27 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
                                   ),
                                   Text(
                                     '₪${cart.getSubTotal()}',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0x66000000)),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Discount',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0x66000000)),
+                                  ),
+                                  Text(
+                                    '₪${widget.discount}',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w400,
@@ -324,7 +349,7 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
                                         color: Colors.black),
                                   ),
                                   Text(
-                                    '₪${cart.getSubTotal() +(isPickUpEnabled ? 0 : _selectedCity!.governoratePrice!)}',
+                                    '₪${cart.getSubTotal() + (isPickUpEnabled ? 0 : _selectedCity!.governoratePrice!) - widget.discount}',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,

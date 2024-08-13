@@ -1,4 +1,5 @@
 import 'package:beauty_arena_app/application/app_state.dart';
+import 'package:beauty_arena_app/application/cart_provider.dart';
 import 'package:beauty_arena_app/application/user_provider.dart';
 import 'package:beauty_arena_app/infrastructure/services/marina.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,8 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../configurations/enums.dart';
+import '../../../infrastructure/models/cart.dart';
+import '../../../infrastructure/models/dashboard.dart';
 import '../../../infrastructure/models/marina.dart';
+import '../../elements/flush_bar.dart';
 import '../../elements/processing_widget.dart';
+import '../product_details/item_details_view.dart';
 
 class MarinaView extends StatefulWidget {
   const MarinaView({super.key});
@@ -38,6 +43,7 @@ class _MarinaViewState extends State<MarinaView> {
   @override
   Widget build(BuildContext context) {
     var user = Provider.of<UserProvider>(context);
+    var cart = Provider.of<CartProvider>(context);
     var state = Provider.of<AppState>(context, listen: false);
     return Scaffold(
       body: model == null
@@ -240,86 +246,185 @@ class _MarinaViewState extends State<MarinaView> {
                       itemBuilder: (context, i) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: CachedNetworkImage(
-                                      imageUrl: getSelectedProductsList(
-                                              model!.data![0])[i]
-                                          .image
-                                          .toString(),
-                                      height: 88,
-                                      width: 88,
-                                      fit: BoxFit.fill,
-                                      placeholder: (context, url) =>
-                                          Image.asset(
-                                        'assets/images/user_ph.jpeg',
-                                        fit: BoxFit.cover,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ItemDetailsView(
+                                          model: Product(
+                                            id: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .id,
+                                            name: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .name,
+                                            outOfStock: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .outOfStock,
+                                            crossSellingProducts: [],
+                                            price: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .price,
+                                            image: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .image,
+                                            images: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .images,
+                                            description:
+                                                getSelectedProductsList(
+                                                        model!.data![0])[i]
+                                                    .description,
+                                            inventory: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .inventory,
+                                            status: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .status,
+                                            sku: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .sku,
+                                            offer: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .offer,
+                                            salePrice: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .salePrice,
+                                          ),
+                                          categoryID:selectedCategory == null ? "-1": selectedCategory!.id.toString())));
+                            },
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: CachedNetworkImage(
+                                        imageUrl: getSelectedProductsList(
+                                                model!.data![0])[i]
+                                            .image
+                                            .toString(),
                                         height: 88,
                                         width: 88,
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                        'assets/images/user_ph.jpeg',
-                                        height: 88,
-                                        width: 88,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
+                                        placeholder: (context, url) =>
+                                            Image.asset(
+                                          'assets/images/user_ph.jpeg',
+                                          fit: BoxFit.cover,
+                                          height: 88,
+                                          width: 88,
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                          'assets/images/user_ph.jpeg',
+                                          height: 88,
+                                          width: 88,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          getSelectedProductsList(
-                                                  model!.data![0])[i]
-                                              .name
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                        Row(
-                                          children: [
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .name
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                          if (getSelectedProductsList(
+                                                      model!.data![0])[i]
+                                                  .offer !=
+                                              0)
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '₪${getSelectedProductsList(model!.data![0])[i].salePrice.toString()}',
+                                                  style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Color(0xffDE1D1D)),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                  '₪${getSelectedProductsList(model!.data![0])[i].price.toString()}',
+                                                  style: const TextStyle(
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Color(0xff9B9B9B)),
+                                                ),
+                                              ],
+                                            )
+                                          else
                                             Text(
-                                              "₪${getSelectedProductsList(model!.data![0])[i].price.toString()}",
-                                              style: TextStyle(
+                                              '₪${getSelectedProductsList(model!.data![0])[i].price.toString()}',
+                                              style: const TextStyle(
                                                   fontSize: 16,
-                                                  color: Color(0xffFF2D55),
-                                                  fontWeight: FontWeight.bold),
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.black),
                                             ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                            Text(
-                                              "₪${getSelectedProductsList(model!.data![0])[i].offerPercentage}",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Color(0xffB4B4B4),
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  IconButton(onPressed: (){}, icon:  Image.asset('assets/images/add_cart_icon.png',
-                                      width: 24.12, height: 24.09),)
-                                ],
-                              ),
-                              Divider(
-                                indent: 50,
-                                endIndent: 50,
-                              )
-                            ],
+                                    IconButton(
+                                      onPressed: () {
+                                        cart.addItem(CartModel(
+                                            id: getSelectedProductsList(model!.data![0])[i]
+                                                .id
+                                                .toString(),
+                                            offer: getSelectedProductsList(model!.data![0])[i]
+                                                .offer!
+                                                .toString(),
+                                            name: getSelectedProductsList(model!.data![0])[i]
+                                                .name
+                                                .toString(),
+                                            image: getSelectedProductsList(model!.data![0])[i]
+                                                .image
+                                                .toString(),
+                                            categoryID: getSelectedProductsList(model!.data![0])[i]
+                                                .categories![0]
+                                                .id
+                                                .toString(),
+                                            totalQuantity: getSelectedProductsList(model!.data![0])[i]
+                                                .inventory!,
+                                            product: getSelectedProductsList(
+                                                model!.data![0])[i],
+                                            price: getSelectedProductsList(model!.data![0])[i].offer == 1
+                                                ? getSelectedProductsList(model!.data![0])[i]
+                                                    .salePrice
+                                                    .toString()
+                                                : getSelectedProductsList(model!.data![0])[i].price.toString(),
+                                            quantity: 1));
+                                        addToCartFlushBar(context,
+                                            title:
+                                                'Item has been added to cart.');
+                                      },
+                                      icon: Image.asset(
+                                          'assets/images/add_cart_icon.png',
+                                          width: 24.12,
+                                          height: 24.09),
+                                    )
+                                  ],
+                                ),
+                                Divider(
+                                  indent: 50,
+                                  endIndent: 50,
+                                )
+                              ],
+                            ),
                           ),
                         );
                       })

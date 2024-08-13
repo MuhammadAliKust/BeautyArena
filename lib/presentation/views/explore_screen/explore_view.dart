@@ -44,7 +44,9 @@ class ExploreView extends StatelessWidget {
             },
           ),
         ],
-        title: Text(  category.name.toString()),
+        title: Text(  category.name.toString(),style: TextStyle(
+          color: Colors.white
+        ),),
       ),
       body: ExploreViewBody(
         model: category,

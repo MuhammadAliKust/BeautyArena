@@ -158,6 +158,7 @@ class _BottomIndicatorBarState extends State<BottomIndicatorBar> {
           ),
           Text(
             item.label,
+            textAlign: TextAlign.center,
             style: TextStyle(color: color, fontSize: 11),
           )
         ],

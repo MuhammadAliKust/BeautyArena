@@ -52,7 +52,7 @@ class FrontEndConfigs {
           label: 'Offers'),
       BottomIndicatorNavigationBarItem(
           icon: Image.asset(
-            'assets/images/notification_icon.png',
+            'assets/images/makeover.png',
             color: selectedIndex == 4
                 ? FrontEndConfigs.kSelectedColor
                 : FrontEndConfigs.kBodyColor,

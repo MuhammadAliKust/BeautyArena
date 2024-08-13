@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'dashboard.dart';
+
 MarinaModel marinaModelFromJson(String str) => MarinaModel.fromJson(json.decode(str));
 
 String marinaModelToJson(MarinaModel data) => json.encode(data.toJson());
@@ -76,97 +78,97 @@ class Category {
   };
 }
 
-class Product {
-  final int? id;
-  final String? name;
-  final int? price;
-  final int? offer;
-  final int? offerPercentage;
-  final int? salePrice;
-  final String? image;
-  final int? outOfStock;
-  final List<String>? images;
-  final String? description;
-  final int? inventory;
-  final String? status;
-  final String? availabilityStatus;
-  final String? sku;
-  final String? type;
-  final String? genderLabel;
-  final int? favorite;
-  final Brand? brand;
-  final List<Category>? categories;
-  final List<Keyword>? keywords;
-
-  Product({
-    this.id,
-    this.name,
-    this.price,
-    this.offer,
-    this.offerPercentage,
-    this.salePrice,
-    this.image,
-    this.outOfStock,
-    this.images,
-    this.description,
-    this.inventory,
-    this.status,
-    this.availabilityStatus,
-    this.sku,
-    this.type,
-    this.genderLabel,
-    this.favorite,
-    this.brand,
-    this.categories,
-    this.keywords,
-  });
-
-  factory Product.fromJson(Map<String, dynamic> json) => Product(
-    id: json["id"],
-    name: json["name"],
-    price: json["price"],
-    offer: json["offer"],
-    offerPercentage: json["offer_percentage"],
-    salePrice: json["sale_price"],
-    image: json["image"],
-    outOfStock: json["out_of_stock"],
-    images: json["images"] == null ? [] : List<String>.from(json["images"]!.map((x) => x)),
-    description: json["description"],
-    inventory: json["inventory"],
-    status: json["status"],
-    availabilityStatus: json["availability_status"],
-    sku: json["sku"],
-    type: json["type"],
-    genderLabel: json["gender_label"],
-    favorite: json["favorite"],
-    brand: json["brand"] == null ? null : Brand.fromJson(json["brand"]),
-    categories: json["categories"] == null ? [] : List<Category>.from(json["categories"]!.map((x) => Category.fromJson(x))),
-    keywords: json["keywords"] == null ? [] : List<Keyword>.from(json["keywords"]!.map((x) => Keyword.fromJson(x))),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "price": price,
-    "offer": offer,
-    "offer_percentage": offerPercentage,
-    "sale_price": salePrice,
-    "image": image,
-    "out_of_stock": outOfStock,
-    "images": images == null ? [] : List<dynamic>.from(images!.map((x) => x)),
-    "description": description,
-    "inventory": inventory,
-    "status": status,
-    "availability_status": availabilityStatus,
-    "sku": sku,
-    "type": type,
-    "gender_label": genderLabel,
-    "favorite": favorite,
-    "brand": brand?.toJson(),
-    "categories": categories == null ? [] : List<dynamic>.from(categories!.map((x) => x.toJson())),
-    "keywords": keywords == null ? [] : List<dynamic>.from(keywords!.map((x) => x.toJson())),
-  };
-}
+// class Product {
+//   final int? id;
+//   final String? name;
+//   final int? price;
+//   final int? offer;
+//   final int? offerPercentage;
+//   final int? salePrice;
+//   final String? image;
+//   final int? outOfStock;
+//   final List<String>? images;
+//   final String? description;
+//   final int? inventory;
+//   final String? status;
+//   final String? availabilityStatus;
+//   final String? sku;
+//   final String? type;
+//   final String? genderLabel;
+//   final int? favorite;
+//   final Brand? brand;
+//   final List<Category>? categories;
+//   final List<Keyword>? keywords;
+//
+//   Product({
+//     this.id,
+//     this.name,
+//     this.price,
+//     this.offer,
+//     this.offerPercentage,
+//     this.salePrice,
+//     this.image,
+//     this.outOfStock,
+//     this.images,
+//     this.description,
+//     this.inventory,
+//     this.status,
+//     this.availabilityStatus,
+//     this.sku,
+//     this.type,
+//     this.genderLabel,
+//     this.favorite,
+//     this.brand,
+//     this.categories,
+//     this.keywords,
+//   });
+//
+//   factory Product.fromJson(Map<String, dynamic> json) => Product(
+//     id: json["id"],
+//     name: json["name"],
+//     price: json["price"],
+//     offer: json["offer"],
+//     offerPercentage: json["offer_percentage"],
+//     salePrice: json["sale_price"],
+//     image: json["image"],
+//     outOfStock: json["out_of_stock"],
+//     images: json["images"] == null ? [] : List<String>.from(json["images"]!.map((x) => x)),
+//     description: json["description"],
+//     inventory: json["inventory"],
+//     status: json["status"],
+//     availabilityStatus: json["availability_status"],
+//     sku: json["sku"],
+//     type: json["type"],
+//     genderLabel: json["gender_label"],
+//     favorite: json["favorite"],
+//     brand: json["brand"] == null ? null : Brand.fromJson(json["brand"]),
+//     categories: json["categories"] == null ? [] : List<Category>.from(json["categories"]!.map((x) => Category.fromJson(x))),
+//     keywords: json["keywords"] == null ? [] : List<Keyword>.from(json["keywords"]!.map((x) => Keyword.fromJson(x))),
+//   );
+//
+//   Map<String, dynamic> toJson() => {
+//     "id": id,
+//     "name": name,
+//     "price": price,
+//     "offer": offer,
+//     "offer_percentage": offerPercentage,
+//     "sale_price": salePrice,
+//     "image": image,
+//     "out_of_stock": outOfStock,
+//     "images": images == null ? [] : List<dynamic>.from(images!.map((x) => x)),
+//     "description": description,
+//     "inventory": inventory,
+//     "status": status,
+//     "availability_status": availabilityStatus,
+//     "sku": sku,
+//     "type": type,
+//     "gender_label": genderLabel,
+//     "favorite": favorite,
+//     "brand": brand?.toJson(),
+//     "categories": categories == null ? [] : List<dynamic>.from(categories!.map((x) => x.toJson())),
+//     "keywords": keywords == null ? [] : List<dynamic>.from(keywords!.map((x) => x.toJson())),
+//   };
+// }
 
 class Brand {
   final int? id;

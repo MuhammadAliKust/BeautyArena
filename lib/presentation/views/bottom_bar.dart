@@ -367,9 +367,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                                   child: Row(
                                     children: [
                                       Image.asset(
-                                          'assets/images/notification_icon.png',
-                                          height: 19.59,
-                                          width: 13.06),
+                                          'assets/images/bell.png',
+                                          height: 20,
+                                          width: 20,),
                                       SizedBox(width: 15),
                                       Text(
                                         'Notifications',

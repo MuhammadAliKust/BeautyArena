@@ -28,8 +28,8 @@ class AppButtonSquareBorder extends StatelessWidget {
                 ]),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    primary: Colors.transparent,
-                    onSurface: Colors.transparent,
+                    backgroundColor: Colors.transparent,
+                    disabledForegroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),

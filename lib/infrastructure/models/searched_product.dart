@@ -213,7 +213,7 @@ class Meta {
   int? lastPage;
   List<Link>? links;
   String? path;
-  String? perPage;
+  num? perPage;
   int? to;
   int? total;
 

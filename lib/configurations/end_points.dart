@@ -3,6 +3,7 @@ class ApiEndPoints {
   static const String kCheckOtp = 'check-otp';
   static const String kRegisterUser = 'register';
   static const String kGetOffers = 'offers';
+  static const String kCheckCoupon = 'coupon/check/';
   static const String kGetOrders = 'orders';
   static const String kSingleOrder = 'order/';
   static const String kGetCategories = 'categories';

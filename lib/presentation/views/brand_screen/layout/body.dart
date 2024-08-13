@@ -56,12 +56,14 @@ class _BrandsViewBodyState extends State<BrandsViewBody> {
   void initState() {
     var user = Provider.of<UserProvider>(context,listen: false);
     var state = Provider.of<AppState>(context, listen: false);
+    var search = Provider.of<SearchProviders>(context,listen: false);
     BrandServices().getAllBrands(context, state,
         user.getUserDetails()!.data!.token.toString()).then((value) {
       brandsList = value.data!;
       setState(() {
 
       });
+      search.saveBrandList(brandsList);
     });
     super.initState();
   }

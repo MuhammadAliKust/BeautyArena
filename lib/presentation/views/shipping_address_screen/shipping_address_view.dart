@@ -5,6 +5,10 @@ import '../../../application/cart_provider.dart';
 import 'layout/body.dart';
 
 class ShippingAddressView extends StatelessWidget {
+  final num discount;
+
+  const ShippingAddressView({super.key, required this.discount});
+
   @override
   Widget build(BuildContext context) {
     var cart = Provider.of<CartProvider>(context);
@@ -26,8 +30,9 @@ class ShippingAddressView extends StatelessWidget {
           },
         ),
       ),
-      body: ShippingAddressViewBody(),
-
+      body: ShippingAddressViewBody(
+        discount: discount,
+      ),
     );
   }
 }
