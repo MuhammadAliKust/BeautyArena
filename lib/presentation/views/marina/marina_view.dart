@@ -3,10 +3,12 @@ import 'package:beauty_arena_app/application/cart_provider.dart';
 import 'package:beauty_arena_app/application/user_provider.dart';
 import 'package:beauty_arena_app/infrastructure/services/marina.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../configurations/enums.dart';
+import '../../../configurations/front_end_configs.dart';
 import '../../../infrastructure/models/cart.dart';
 import '../../../infrastructure/models/dashboard.dart';
 import '../../../infrastructure/models/marina.dart';
@@ -78,7 +80,7 @@ class _MarinaViewState extends State<MarinaView> {
                   ),
                   CachedNetworkImage(
                     imageUrl: model!.data![0].image.toString(),
-                    height: 230,
+                    // height: 230,
                     width: MediaQuery.of(context).size.width,
                     fit: BoxFit.fill,
                     placeholder: (context, url) => Image.asset(
@@ -298,31 +300,72 @@ class _MarinaViewState extends State<MarinaView> {
                               children: [
                                 Row(
                                   children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: CachedNetworkImage(
-                                        imageUrl: getSelectedProductsList(
-                                                model!.data![0])[i]
-                                            .image
-                                            .toString(),
-                                        height: 88,
-                                        width: 88,
-                                        fit: BoxFit.fill,
-                                        placeholder: (context, url) =>
-                                            Image.asset(
-                                          'assets/images/user_ph.jpeg',
-                                          fit: BoxFit.cover,
-                                          height: 88,
-                                          width: 88,
+                                    Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: CachedNetworkImage(
+                                            imageUrl: getSelectedProductsList(
+                                                    model!.data![0])[i]
+                                                .image
+                                                .toString(),
+                                            height: 88,
+                                            width: 88,
+                                            fit: BoxFit.fill,
+                                            placeholder: (context, url) =>
+                                                Image.asset(
+                                              'assets/images/user_ph.jpeg',
+                                              fit: BoxFit.cover,
+                                              height: 88,
+                                              width: 88,
+                                            ),
+                                            errorWidget: (context, url, error) =>
+                                                Image.asset(
+                                              'assets/images/user_ph.jpeg',
+                                              height: 88,
+                                              width: 88,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
                                         ),
-                                        errorWidget: (context, url, error) =>
-                                            Image.asset(
-                                          'assets/images/user_ph.jpeg',
-                                          height: 88,
-                                          width: 88,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
+                                        if ( model!.data![0].products![i].outOfStock == 1)
+                                          Positioned.fill(
+                                            child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Container(
+                                                  height: 20,
+                                                  width: 90,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: const BorderRadius.only(
+                                                          topLeft: Radius.circular(14),
+                                                          topRight: Radius.circular(6),
+                                                          bottomLeft: Radius.circular(6),
+                                                          bottomRight: Radius.circular(6)),
+                                                      color: FrontEndConfigs.kPrimaryColor),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 4.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: CupertinoColors.systemGrey2,
+                                                        borderRadius: BorderRadius.only(
+                                                            topLeft: Radius.circular(12),
+                                                            topRight: Radius.circular(6),
+                                                            bottomLeft: Radius.circular(6),
+                                                            bottomRight: Radius.circular(6)),
+                                                      ),
+                                                      child: Center(
+                                                          child: Text(
+                                                            "Out of Stock!",
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight: FontWeight.w500,
+                                                            ),
+                                                          )),
+                                                    ),
+                                                  ),
+                                                )),
+                                          ),
+                                      ],
                                     ),
                                     SizedBox(
                                       width: 10,

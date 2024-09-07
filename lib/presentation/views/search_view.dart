@@ -4,8 +4,10 @@ import 'package:beauty_arena_app/infrastructure/models/dashboard.dart';
 import 'package:beauty_arena_app/infrastructure/models/searched_product.dart'
     as SP;
 import 'package:beauty_arena_app/presentation/elements/no_data_found.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_searchable_dropdown/flutter_searchable_dropdown.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -42,6 +44,7 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchBrandController = TextEditingController();
   int productType = 0;
   int priceOrder = 1;
   Brand.Datum? _selectedBrand;
@@ -157,6 +160,7 @@ class _SearchViewState extends State<SearchView> {
         .getAllBrands(
             context, state, user.getUserDetails()!.data!.token.toString())
         .then((value) {
+      searchBrandList = value.data!;
       _brandList = value;
       setState(() {});
     });
@@ -174,7 +178,7 @@ class _SearchViewState extends State<SearchView> {
     var error = Provider.of<ErrorString>(context, listen: false);
     var cart = Provider.of<CartProvider>(context);
 
-    return Scaffold(
+    return Scaffold(resizeToAvoidBottomInset: true,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.black,
@@ -588,6 +592,30 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
+  bool isSearchingAllow = false;
+
+  bool isSearched = false;
+  List<Brand.Datum> searchBrandList = [];
+
+  void _searchData(String val) async {
+    searchBrandList.clear();
+    for (var i in _brandList!.data!) {
+      var lowerCaseString = i.title.toString().toLowerCase();
+      ;
+
+      var defaultCase = i.id.toString();
+      if (lowerCaseString.contains(val) || defaultCase.contains(val)) {
+        isSearched = true;
+
+        searchBrandList.add(i);
+      } else {
+        isSearched = true;
+      }
+
+      setState(() {});
+    }
+  }
+
   Widget _getCustomText(
     String text,
   ) {
@@ -599,41 +627,259 @@ class _SearchViewState extends State<SearchView> {
   }
 
   Widget getBrandDropDown() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 50,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(7),
-          border: Border.all(color: const Color(0xffBEBEBE)),
-          color: Colors.white),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: DropdownButton(
-          value: _selectedBrand,
-          hint: Text(
-            'Brands',
-            style: TextStyle(
-              fontSize: 15,
-              letterSpacing: 0.5,
-              fontWeight: FontWeight.w500,
-              color: FrontEndConfigs.kGreyColor.withOpacity(0.6),
-            ),
-          ),
-          icon: const Icon(Icons.keyboard_arrow_down),
-          items: _brandList!.data!.map((Brand.Datum? items) {
-            return DropdownMenuItem(
-              value: items,
-              child: Text(items!.title.toString()),
-            );
-          }).toList(),
-          isExpanded: true,
-          underline: SizedBox(),
-          onChanged: (Brand.Datum? newValue) {
-            setState(() {
-              _selectedBrand = newValue!;
+    // return DropdownSearch<String>(
+    //   popupProps: PopupProps.menu(
+    //     showSelectedItems: true,
+    //     showSearchBox: true,
+    //     disabledItemFn: (String s) => s.startsWith('I'),
+    //   ),
+    //   // filterFn: (i, s) {
+    //   //   log('called');
+    //   //   log(i.title.toString());
+    //   //   // log(s.title.toString());
+    //   //   return i.title == s;
+    //   // },
+    //   //
+    //   compareFn: (i, s) {
+    //     log('called compare');
+    //     return i==s;
+    //
+    //   },
+    //   items: ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
+    //   dropdownDecoratorProps: DropDownDecoratorProps(
+    //     dropdownSearchDecoration: InputDecoration(
+    //       labelText: "Menu mode",
+    //       hintText: "country in menu mode",
+    //     ),
+    //   ),
+    //
+    //   onChanged: print,
+    //   selectedItem: "Brazil",
+    // );
+    return InkWell(
+      onTap: () {
+        showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+            )),
+            builder: (context) {
+              return Container(height: MediaQuery.of(context).size.height * 0.75,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: StatefulBuilder(builder: (context, dialogState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Text(
+                            "Select Brand",
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: TextFormField(
+                              controller: _searchBrandController,
+                              textInputAction: TextInputAction.search,
+                              onChanged: (val) {
+                                if (val == "") {
+                                  isSearchingAllow = false;
+                                  searchBrandList.clear();
+                                  dialogState(() {});
+                                } else {
+                                  isSearchingAllow = true;
+                                  searchBrandList.clear();
+                                  for (var i in _brandList!.data!) {
+                                    var lowerCaseString =
+                                        i.title.toString().toLowerCase();
+                                    ;
+
+                                    var defaultCase = i.id.toString();
+                                    if (lowerCaseString.contains(val) ||
+                                        defaultCase.contains(val)) {
+                                      isSearched = true;
+
+                                      searchBrandList.add(i);
+                                    } else {
+                                      isSearched = true;
+                                    }
+
+                                    dialogState(() {});
+                                  }
+                                }
+                              },
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  letterSpacing: 0.5,
+                                  fontWeight: FontWeight.w500),
+                              cursorColor:
+                                  FrontEndConfigs.kGreyColor.withOpacity(0.2),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 17, horizontal: 15),
+                                hintText: "What are you searching for?",
+                                hintStyle: TextStyle(
+                                  color:
+                                      FrontEndConfigs.kGreyColor.withOpacity(0.6),
+                                  fontSize: 15,
+                                  letterSpacing: 0.5,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      const BorderSide(color: Color(0xffBEBEBE)),
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      const BorderSide(color: Color(0xffBEBEBE)),
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
+                              )),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: searchBrandList.isEmpty
+                                  ? _brandList!.data!.length
+                                  : searchBrandList.length,
+                              itemBuilder: (context, i) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 3.0),
+                                  child: ListTile(
+                                    onTap: () {
+                                      _selectedBrand = searchBrandList.isEmpty
+                                          ? _brandList!.data![i]
+                                          : searchBrandList[i];
+                                      setState(() {});
+                                      dialogState(() {});
+                                      Navigator.pop(context);
+
+                                      searchBrandList.clear();
+                                      _searchBrandController.clear();
+                                    },
+                                    title: Text(searchBrandList.isEmpty
+                                        ? _brandList!.data![i].title.toString()
+                                        : searchBrandList[i].title.toString()),
+                                  ),
+                                );
+                              }),
+                        )
+                      ],
+                    );
+                  }),
+                ),
+              );
             });
-          },
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: 50,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(color: const Color(0xffBEBEBE)),
+            color: Colors.white),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          // child: DropdownSearch<Brand.Datum>(
+          //   items: _brandList!.data!,
+          //   compareFn: (i, s) {
+          //     log('called');
+          //     log(i.title.toString());
+          //     // log(s.title.toString());
+          //     return i.title == s.title;
+          //   },
+          //   //
+          //   onSaved:(text) {
+          //     List<Brand.Datum> filtered = [];
+          //     for (int i = 0; i < _brandList!.data!.length; i++) {
+          //       if (_brandList!.data![i].title! == text) {
+          //         filtered.add(_brandList!.data![i]);
+          //       }
+          //     }
+          //     return;
+          //   },
+          //
+          //
+          //   selectedItem: _selectedBrand,
+          //   popupProps: PopupPropsMultiSelection.menu(
+          //     showSelectedItems: true,
+          //     showSearchBox: true,
+          //     isFilterOnline: true,
+          //     itemBuilder: _customPopupItemBuilderExample2,
+          //   ),
+          // ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _selectedBrand != null
+                    ? _selectedBrand!.title.toString()
+                    : "Brands",
+                style: TextStyle(
+                  fontSize: 15,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.w500,
+                  color: FrontEndConfigs.kGreyColor.withOpacity(0.6),
+                ),
+              ),
+              const Icon(Icons.keyboard_arrow_down),
+            ],
+          ),
+          // child: DropdownButton(
+          //   value: _selectedBrand,
+          //   hint: Text(
+          //     'Brands',
+          //     style: TextStyle(
+          //       fontSize: 15,
+          //       letterSpacing: 0.5,
+          //       fontWeight: FontWeight.w500,
+          //       color: FrontEndConfigs.kGreyColor.withOpacity(0.6),
+          //     ),
+          //   ),
+          //   icon: const Icon(Icons.keyboard_arrow_down),
+          //   items: _brandList!.data!.map((Brand.Datum? items) {
+          //     return DropdownMenuItem(
+          //       value: items,
+          //       child: Text(items!.title.toString()),
+          //     );
+          //   }).toList(),
+          //   isExpanded: true,
+          //   underline: SizedBox(),
+          //   onChanged: (Brand.Datum? newValue) {
+          //     setState(() {
+          //       _selectedBrand = newValue!;
+          //     });
+          //   },
+          // ),
         ),
+      ),
+    );
+  }
+
+  Widget _customPopupItemBuilderExample2(
+      BuildContext context, Brand.Datum item, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(item.title!),
       ),
     );
   }

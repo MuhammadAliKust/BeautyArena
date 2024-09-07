@@ -1,4 +1,4 @@
-import 'dart:developer';
+ import 'dart:developer';
 
 import 'package:beauty_arena_app/application/app_state.dart';
 import 'package:beauty_arena_app/application/user_provider.dart';

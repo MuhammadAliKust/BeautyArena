@@ -174,10 +174,11 @@ class _ReviewOrderSummaryViewState extends State<ReviewOrderSummaryView> {
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           SizedBox(
-                                            width: 20,
+                                            width: 10,
                                           ),
                                           Text(
-                                            "₪${e.quantity * num.parse(e.price)}",
+                                            "₪${(e.quantity * num.parse(e.price)).toStringAsFixed(2)}",
+
                                             style: TextStyle(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w500),
@@ -192,56 +193,56 @@ class _ReviewOrderSummaryViewState extends State<ReviewOrderSummaryView> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                      border: Border.all(color: Color(0xffC5C5C5))),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0, vertical: 9),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Image.asset(
-                              'assets/images/box.png',
-                              height: 20,
-                              width: 20,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Shipping Details:",
-                              style: TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 14,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Shipping to Bethlehem",
-                              style: TextStyle(
-                                  fontSize: 11, fontWeight: FontWeight.w500),
-                            ),
-                            Text(
-                              "₪90",
-                              style: TextStyle(
-                                  fontSize: 11, fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // SizedBox(height: 10),
+                // Container(
+                //   decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(10),
+                //       color: Colors.white,
+                //       border: Border.all(color: Color(0xffC5C5C5))),
+                //   child: Padding(
+                //     padding: const EdgeInsets.symmetric(
+                //         horizontal: 12.0, vertical: 9),
+                //     child: Column(
+                //       children: [
+                //         Row(
+                //           children: [
+                //             Image.asset(
+                //               'assets/images/box.png',
+                //               height: 20,
+                //               width: 20,
+                //             ),
+                //             SizedBox(
+                //               width: 5,
+                //             ),
+                //             Text(
+                //               "Shipping Details:",
+                //               style: TextStyle(
+                //                   fontSize: 13, fontWeight: FontWeight.w600),
+                //             )
+                //           ],
+                //         ),
+                //         SizedBox(
+                //           height: 14,
+                //         ),
+                //         Row(
+                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //           children: [
+                //             Text(
+                //               "Shipping to Bethlehem",
+                //               style: TextStyle(
+                //                   fontSize: 11, fontWeight: FontWeight.w500),
+                //             ),
+                //             Text(
+                //               "₪90",
+                //               style: TextStyle(
+                //                   fontSize: 11, fontWeight: FontWeight.w500),
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: 10),
                 DottedBorder(
                   color: Color(0xffCE0000),borderType: BorderType.RRect,

@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../infrastructure/models/categories.dart';
 import '../../../../../infrastructure/models/dashboard.dart';
+import '../../../explore_screen/explore_view.dart';
 
 
 class PosterWidget extends StatelessWidget {
@@ -13,38 +15,48 @@ class PosterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: 13),
-            width: MediaQuery.of(context)
-                .size
-                .width,
-            decoration: BoxDecoration(
-              borderRadius:
-              BorderRadius.circular(8),
-            ),
-            child: ClipRRect(
+        InkWell(
+          onTap: (){
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => ExploreView(category: Datum(
+            //           id: model.
+            //         ))));
+          },
+          child: Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: 13),
+              width: MediaQuery.of(context)
+                  .size
+                  .width,
+              decoration: BoxDecoration(
                 borderRadius:
                 BorderRadius.circular(8),
-                child:   ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
+              ),
+              child: ClipRRect(
+                  borderRadius:
+                  BorderRadius.circular(8),
+                  child:   ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
 
-                    imageUrl: model.image.toString(),
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Image.asset(
-                      'assets/images/ph.jpg',
-                      fit: BoxFit.cover,
-                      width: MediaQuery.of(context).size.width,
-                    ),
-                    errorWidget: (context, url, error) => Image.asset(
-                      'assets/images/ph.jpg',
+                      imageUrl: model.image.toString(),
                       width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover,
+                      placeholder: (context, url) => Image.asset(
+                        'assets/images/ph.jpg',
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                      ),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/images/ph.jpg',
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                ))),
+                  ))),
+        ),
         // Positioned.fill(
         //   bottom: 70,
         //   child: Align(

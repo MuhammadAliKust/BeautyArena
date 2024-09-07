@@ -373,24 +373,16 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
                         getFlushBar(context, title: 'Kindly select city.');
                         return;
                       }
-                      if (_addressController.text.isEmpty) {
-                        getFlushBar(context, title: 'Address cannot be empty.');
-                        return;
-                      }
-                      if (_numberController.text.isEmpty) {
-                        getFlushBar(context,
-                            title: 'Phone number cannot be empty.');
-                        return;
-                      }
+
 
                       try {
                         OrderResponseModel model = await OrdersServices()
                             .createNewOrder(context,
                                 list: cart.cartItems,
                                 note: _noteController.text,
-                                address: _addressController.text,
+                                address:  user.getUserDetails()!.data!.customer!.customerGovernorate.toString(),
                                 deviceID: '123',
-                                number: _numberController.text,
+                                number: user.getUserDetails()!.data!.customer!.customerMobile.toString(),
                                 token: user
                                     .getUserDetails()!
                                     .data!
@@ -455,36 +447,36 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 15),
+                SizedBox(height: 15),Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(isPickUpEnabled?'assets/images/store.png': 'assets/images/shipping_address_icon.png',
+                            width: 30, height: 30),
+                        SizedBox(width: 10),
+                        Text(
+                          isPickUpEnabled?"Pickup from the store":   'Shipping Address',
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),SizedBox(height: 7),
+                Text(
+                  'For any comments or notes, please write them here.',
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff515151)),
+                ),   SizedBox(height: 10),
                 if (!isPickUpEnabled) ...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset('assets/images/shipping_address_icon.png',
-                              width: 30, height: 30),
-                          SizedBox(width: 10),
-                          Text(
-                            'Shipping Address',
-                            style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 7),
-                  Text(
-                    'This is the address that we will ship to.',
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff515151)),
-                  ),
-                  SizedBox(height: 10),
+
+
+
                   AuthTextField(
                     controller: _nameController,
                     hint: 'Your Name',
@@ -495,22 +487,22 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
                   SizedBox(height: 13),
                   if (_citiesList != null) getCityDropDown(),
                   SizedBox(height: 13),
-                  AuthTextField(
-                    controller: _addressController,
-                    hint: 'Your Address',
-                    lines: 1,
-                    onPwdTap: () {},
-                    validator: (String) {},
-                  ),
-                  SizedBox(height: 13),
-                  AuthTextField(
-                    controller: _numberController,
-                    hint: 'Your Phone Number',
-                    lines: 1,
-                    onPwdTap: () {},
-                    validator: (String) {},
-                  ),
-                  SizedBox(height: 13),
+                  // AuthTextField(
+                  //   controller: _addressController,
+                  //   hint: 'Your Address',
+                  //   lines: 1,
+                  //   onPwdTap: () {},
+                  //   validator: (String) {},
+                  // ),
+                  // SizedBox(height: 13),
+                  // AuthTextField(
+                  //   controller: _numberController,
+                  //   hint: 'Your Phone Number',
+                  //   lines: 1,
+                  //   onPwdTap: () {},
+                  //   validator: (String) {},
+                  // ),
+                  // SizedBox(height: 13),
                 ],
                 AuthTextField(
                   controller: _noteController,
