@@ -3,7 +3,10 @@ import 'dart:developer';
 import 'package:beauty_arena_app/application/cart_provider.dart';
 import 'package:beauty_arena_app/infrastructure/models/cart.dart';
 import 'package:beauty_arena_app/presentation/elements/flush_bar.dart';
+import 'package:beauty_arena_app/presentation/views/brand_screen/brands_view.dart';
+import 'package:beauty_arena_app/presentation/views/single_product/single_product_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +19,7 @@ import '../../../../infrastructure/models/user.dart';
 import '../../../../infrastructure/services/city.dart';
 import '../../../../infrastructure/services/dashboard.dart';
 import '../../../../infrastructure/services/local.dart';
+import '../../../../main.dart';
 import '../../bottom_bar.dart';
 import '../../onboarding_screen/onboarding_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,17 +37,21 @@ class _SplashViewBodyState extends State<SplashViewBody> {
   CityModel? _citiesList;
   final FirebaseRemoteConfig _remoteConfig = FirebaseRemoteConfig.instance;
 
-  Future getData() async {
+  Future getData(BuildContext cont) async {
     var prefs = await SharedPreferences.getInstance();
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
-    var cartProvider = Provider.of<CartProvider>(context, listen: false);
-    var model = userModelFromJson(prefs.getString('USER_DATA'));
+    var userProvider = Provider.of<UserProvider>(cont, listen: false);
+    var cartProvider = Provider.of<CartProvider>(cont, listen: false);
+    if (prefs.getString('USER_DATA') != null) {
+      var model = userModelFromJson(prefs.getString('USER_DATA'));
+
+      userProvider.saveUserDetails(model);
+    }
+
     if (prefs.getString('CART_DATA') != null) {
       var cartModel = cartModelFromJson(prefs.getString('CART_DATA'));
       cartProvider.setCartList(cartModel);
     }
 
-    userProvider.saveUserDetails(model);
     return Future.value(true);
   }
 
@@ -93,12 +101,13 @@ class _SplashViewBodyState extends State<SplashViewBody> {
 
   @override
   void initState() {
-    subscribe();
+    // subscribe();
     FirebaseMessaging.instance.getToken().then((value) {
       debugPrint(value.toString());
     });
     FirebaseAuth.instance.signInAnonymously();
     setTimer();
+
     var remoteConfig =
         Provider.of<RemoteConfigProvider>(context, listen: false);
     _initConfig().then((value) {
@@ -107,32 +116,123 @@ class _SplashViewBodyState extends State<SplashViewBody> {
         if (value.data != null) {
           await CacheServices.instance.writeCities(value);
           var prefs = await SharedPreferences.getInstance();
+
           setState(() {});
-          if (remoteConfig.getRemoteConfig()!.onBoardingSection == true) {
-            if (prefs.getString('LOGIN_STATUS') == null) {
-              await Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => OnboardingView()));
-            } else {
-              await getData().then((value) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => BottomNavBar()),
-                    (route) => false);
+          try {
+            FirebaseDynamicLinks.instance.onLink
+                .listen((PendingDynamicLinkData dynamicLinkData) async {
+              getData(navigatorKey.currentContext!).then((value) async {
+                if (value != null) {
+                  if (dynamicLinkData.link.queryParameters.containsKey('id')) {
+                    String? id = dynamicLinkData.link.queryParameters['id'];
+                    Navigator.pushAndRemoveUntil(
+                        navigatorKey.currentContext!,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SingleProductView(productID: id.toString())),
+                        (route) => false);
+                  }else{
+                    await Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => WelcomeView()));
+                  }
+                } else {
+                  await Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => WelcomeView()));
+                }
               });
-            }
-          } else {
-            if (prefs.getString('LOGIN_STATUS') == null) {
-              await Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => WelcomeView()));
-            } else {
-              await getData().then((value) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => BottomNavBar()),
-                    (route) => false);
+            });
+          } catch (e) {
+            getData(navigatorKey.currentContext!).then((user) {
+              SharedPreferences.getInstance().then((prefs) async {
+                if (remoteConfig.getRemoteConfig()!.onBoardingSection == true) {
+                  if (prefs.getString('LOGIN_STATUS') == null) {
+                    await Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => OnboardingView()));
+                  } else {
+                    await getData(context).then((value) {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavBar()),
+                          (route) => false);
+                    });
+                  }
+                } else {
+                  if (prefs.getString('LOGIN_STATUS') == null) {
+                    await Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => WelcomeView()));
+                  } else {
+                    await getData(context).then((value) {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavBar()),
+                          (route) => false);
+                    });
+                  }
+                }
               });
-            }
+            });
           }
+          await FirebaseDynamicLinks.instance
+              .getInitialLink()
+              .then((value) async {
+            getData(navigatorKey.currentContext!).then((user) {
+              SharedPreferences.getInstance().then((prefs) async {
+                if (value != null) {
+                  log(value.toString());
+                  if (value.link.queryParameters.containsKey('id')) {
+                    String? id = value.link.queryParameters['id'];
+
+                    Navigator.pushAndRemoveUntil(
+                        navigatorKey.currentContext!,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SingleProductView(productID: id.toString())),
+                        (route) => false);
+                  }
+                } else {
+                  if (remoteConfig.getRemoteConfig()!.onBoardingSection ==
+                      true) {
+                    if (prefs.getString('LOGIN_STATUS') == null) {
+                      await Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => OnboardingView()));
+                    } else {
+                      await getData(context).then((value) {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BottomNavBar()),
+                            (route) => false);
+                      });
+                    }
+                  } else {
+                    if (prefs.getString('LOGIN_STATUS') == null) {
+                      await Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WelcomeView()));
+                    } else {
+                      await getData(context).then((value) {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BottomNavBar()),
+                            (route) => false);
+                      });
+                    }
+                  }
+                }
+              });
+            });
+          });
+        }else{
+          await Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => WelcomeView()));
         }
       });
     });

@@ -139,7 +139,7 @@ class ExploreProductWidget extends StatelessWidget {
                             description: model.description,
                             inventory: model.inventory,
                             status: model.status,
-                            crossSellingProducts: model.crossSellingProducts!,
+                            crossSellingProducts: model.crossSellingProducts ??[],
                             sku: model.sku,
                             offer: model.offer,
                             salePrice: model.salePrice,

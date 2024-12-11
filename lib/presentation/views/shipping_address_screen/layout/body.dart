@@ -281,7 +281,7 @@ class _ShippingAddressViewBodyState extends State<ShippingAddressViewBody> {
                                         color: Color(0x66000000)),
                                   ),
                                   Text(
-                                    '₪${widget.discount}',
+                                    '₪${widget.discount.toStringAsFixed(2)}',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w400,

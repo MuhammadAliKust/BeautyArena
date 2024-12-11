@@ -160,7 +160,7 @@ class _SearchViewState extends State<SearchView> {
         .getAllBrands(
             context, state, user.getUserDetails()!.data!.token.toString())
         .then((value) {
-      searchBrandList = value.data!;
+      localBrandList = value.data!;
       _brandList = value;
       setState(() {});
     });
@@ -177,7 +177,6 @@ class _SearchViewState extends State<SearchView> {
     var user = Provider.of<UserProvider>(context);
     var error = Provider.of<ErrorString>(context, listen: false);
     var cart = Provider.of<CartProvider>(context);
-
     return Scaffold(resizeToAvoidBottomInset: true,
       appBar: AppBar(
         elevation: 0,
@@ -626,7 +625,9 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
+  List<Brand.Datum> localBrandList = [];
   Widget getBrandDropDown() {
+
     // return DropdownSearch<String>(
     //   popupProps: PopupProps.menu(
     //     showSelectedItems: true,
@@ -702,12 +703,12 @@ class _SearchViewState extends State<SearchView> {
                                 } else {
                                   isSearchingAllow = true;
                                   searchBrandList.clear();
-                                  for (var i in _brandList!.data!) {
+                                  for (var i in localBrandList) {
                                     var lowerCaseString =
                                         i.title.toString().toLowerCase();
-                                    ;
 
-                                    var defaultCase = i.id.toString();
+
+                                    var defaultCase = i.title.toString();
                                     if (lowerCaseString.contains(val) ||
                                         defaultCase.contains(val)) {
                                       isSearched = true;
@@ -716,7 +717,6 @@ class _SearchViewState extends State<SearchView> {
                                     } else {
                                       isSearched = true;
                                     }
-
                                     dialogState(() {});
                                   }
                                 }
@@ -755,7 +755,7 @@ class _SearchViewState extends State<SearchView> {
                         Expanded(
                           child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount: searchBrandList.isEmpty
+                              itemCount: !isSearchingAllow
                                   ? _brandList!.data!.length
                                   : searchBrandList.length,
                               itemBuilder: (context, i) {
@@ -764,17 +764,17 @@ class _SearchViewState extends State<SearchView> {
                                       const EdgeInsets.symmetric(horizontal: 3.0),
                                   child: ListTile(
                                     onTap: () {
-                                      _selectedBrand = searchBrandList.isEmpty
+                                      _selectedBrand =  !isSearchingAllow
                                           ? _brandList!.data![i]
                                           : searchBrandList[i];
                                       setState(() {});
                                       dialogState(() {});
                                       Navigator.pop(context);
 
-                                      searchBrandList.clear();
+                                      // searchBrandList.clear();
                                       _searchBrandController.clear();
                                     },
-                                    title: Text(searchBrandList.isEmpty
+                                    title: Text(!isSearchingAllow
                                         ? _brandList!.data![i].title.toString()
                                         : searchBrandList[i].title.toString()),
                                   ),

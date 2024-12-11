@@ -378,7 +378,10 @@ String result = "";
                                                 .data!
                                                 .token,
                                             customer: model)));
+                                    getFlushBar(context, title: "Profile has been updated successfully.");
+                                  Future.delayed(Duration(seconds: 4),(){
                                     Navigator.pop(context);
+                                  });
                                   } else {
                                     getFlushBar(context,
                                         title: error.getErrorString());

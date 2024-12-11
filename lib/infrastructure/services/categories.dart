@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:beauty_arena_app/infrastructure/models/category_product.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +46,54 @@ class CategoriesServices {
         state.stateStatus(AppCurrentState.IsError);
       }
       return CategoriesModel.fromJson(json.decode(model));
+    } on HttpException catch (e) {
+      debugPrint(e.message.toString());
+      state.stateStatus(AppCurrentState.IsError);
+      var data = jsonDecode(e.message.toString());
+
+      Provider.of<ErrorString>(context, listen: false)
+          .saveErrorString(data['reasonPhrase']);
+      rethrow;
+    } on SocketException catch (e) {
+      debugPrint('Socket Called');
+      debugPrint(e.message.toString());
+      state.stateStatus(AppCurrentState.IsError);
+      Provider.of<ErrorString>(context, listen: false)
+          .saveErrorString('Kindly check your internet connection.');
+      rethrow;
+    }
+  }
+
+
+  ///Get Products By CategoryID ID
+  Future<CategoryProductModel> getProductByCategoryID(
+      BuildContext context,
+      AppState state,
+      String token,
+      String? categoryID) async {
+    log(token);
+    try {
+      var headers = {'Authorization': 'Bearer $token'};
+      state.stateStatus(AppCurrentState.IsBusy, false);
+      var request = http.Request(
+          'GET',
+          Uri.parse(BackendConfigs.apiUrl(context) +
+              'category/$categoryID'));
+
+      request.headers.addAll(headers);
+      var response = await request.send();
+
+      debugPrint(request.url.toString());
+      debugPrint(response.statusCode.toString());
+      var model;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        log("20 Callled");
+        state.stateStatus(AppCurrentState.IsFree);
+        model = await response.stream.bytesToString();
+      } else {
+        state.stateStatus(AppCurrentState.IsError);
+      }
+      return CategoryProductModel.fromJson(json.decode(model));
     } on HttpException catch (e) {
       debugPrint(e.message.toString());
       state.stateStatus(AppCurrentState.IsError);

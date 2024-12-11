@@ -1,13 +1,22 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:app_links/app_links.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:beauty_arena_app/application/search_providers.dart';
+import 'package:beauty_arena_app/presentation/views/bottom_bar.dart';
+import 'package:beauty_arena_app/presentation/views/categories_screen/categories_view.dart';
+import 'package:beauty_arena_app/presentation/views/deep_link.dart';
+import 'package:beauty_arena_app/presentation/views/featured_products/all_prodcuts_view.dart';
+import 'package:beauty_arena_app/presentation/views/product_details/item_details_view.dart';
+import 'package:beauty_arena_app/presentation/views/single_product/single_product_view.dart';
 import 'package:beauty_arena_app/presentation/views/splash_screen/splash_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'application/discount_provider.dart';
@@ -19,6 +28,8 @@ import 'application/errorStrings.dart';
 import 'application/remote_config_provider.dart';
 import 'application/user_provider.dart';
 import 'presentation/views/cart_screen/cart_view.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -58,9 +69,10 @@ void main() async {
       ),
     ],
   );
+
   ErrorWidget.builder = (FlutterErrorDetails details) => Container(
-    child: Text(details.summary.value.toString()),
-  );
+        child: Text(details.summary.value.toString()),
+      );
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -85,9 +97,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  getPermission()async{
+  getPermission() async {
     await FirebaseMessaging.instance.requestPermission();
   }
+
   @override
   void initState() {
     getPermission();
@@ -133,7 +146,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     FirebaseMessaging.onMessage.listen((message) {
       log("Listen");
-      if(Platform.isAndroid){
+      if (Platform.isAndroid) {
         print(message);
         createNotification(
           title: message.data['title'].toString(),
@@ -150,22 +163,22 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Beauty Arena',
-
+        navigatorKey: navigatorKey,
       theme: ThemeData(
         fontFamily: 'Poppins',
         appBarTheme: AppBarTheme(
           iconTheme: IconThemeData(color: Colors.white),
-
         ),
         scaffoldBackgroundColor: Colors.white,
-useMaterial3: false,
+        useMaterial3: false,
         primarySwatch: Colors.blue,
       ),
-      home: SplashView(),
+      home: SplashView()
     );
   }
 }

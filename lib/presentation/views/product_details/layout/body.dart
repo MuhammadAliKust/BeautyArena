@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:beauty_arena_app/application/dyanmic_link.dart';
 import 'package:beauty_arena_app/infrastructure/models/dashboard.dart';
 import 'package:beauty_arena_app/infrastructure/models/single_product.dart';
 import 'package:beauty_arena_app/presentation/views/home_screen/layout/widgets/product.dart';
@@ -7,8 +8,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../application/app_state.dart';
 import '../../../../application/cart_provider.dart';
@@ -186,23 +189,23 @@ class _ItemDetailsViewBodyState extends State<ItemDetailsViewBody> {
           SizedBox(
             height: 20,
           ),
-          if(widget.model.outOfStock == 1)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Container(
-  width: 130,
-              height: 30,
-              child: Center(
-                  child: Text(
-                "Out Of Stock!",
-                textAlign: TextAlign.center,
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              )),
-              decoration: BoxDecoration(
-                  color: Colors.red, borderRadius: BorderRadius.circular(8)),
+          if (widget.model.outOfStock == 1)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                width: 130,
+                height: 30,
+                child: Center(
+                    child: Text(
+                  "Out Of Stock!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                )),
+                decoration: BoxDecoration(
+                    color: Colors.red, borderRadius: BorderRadius.circular(8)),
+              ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
@@ -255,54 +258,96 @@ class _ItemDetailsViewBodyState extends State<ItemDetailsViewBody> {
                 style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color:Colors.black),
+                    color: Colors.black),
               ),
             ),
           const SizedBox(height: 10),
-          AppButtonSquareBorder(
-              onTap: () {
-                log(widget.model.outOfStock.toString());
-                if (widget.model.outOfStock == 1) {
-                  getFlushBar(context,
-                      title:
-                          'The product is out of stock and can’t be added to cart.');
-                  return;
-                }
-                if (cart.getItemQuantity(widget.model.id.toString()) >=
-                    widget.model.inventory!) {
-                  getFlushBar(context,
-                      title: 'Sorry we do not have enough stock');
-                  return;
-                }
-                cart.addItem(CartModel(
-                    id: widget.model.id.toString(),
-                    offer: widget.model.offer!.toString(),
-                    name: widget.model.name.toString(),
-                    image: widget.model.image.toString(),
-                    categoryID: widget.categoryID.toString(),
-                    totalQuantity: widget.model.inventory!,
-                    product: Product(
-                      id: widget.model.id,
-                      name: widget.model.name,
-                      price: widget.model.price,
-                      image: widget.model.image,
-                      images: widget.model.images,
-                      description: widget.model.description,
-                      inventory: widget.model.inventory,
-                      status: widget.model.status,
-                      crossSellingProducts: widget.model.crossSellingProducts!,
-                      sku: widget.model.sku,
-                      offer: widget.model.offer,
-                      salePrice: widget.model.salePrice,
-                    ),
-                    price: widget.model.offer == 1
-                        ? widget.model.salePrice.toString()
-                        : widget.model.price.toString(),
-                    quantity: 1));
-                addToCartFlushBar(context,
-                    title: 'Item has been added to cart.');
-              },
-              text: 'ADD TO CART'),
+          Row(
+            children: [
+              Expanded(
+                child: AppButtonSquareBorder(
+                    onTap: () {
+                      log(widget.model.outOfStock.toString());
+                      if (widget.model.outOfStock == 1) {
+                        getFlushBar(context,
+                            title:
+                                'The product is out of stock and can’t be added to cart.');
+                        return;
+                      }
+                      if (cart.getItemQuantity(widget.model.id.toString()) >=
+                          widget.model.inventory!) {
+                        getFlushBar(context,
+                            title: 'Sorry we do not have enough stock');
+                        return;
+                      }
+                      cart.addItem(CartModel(
+                          id: widget.model.id.toString(),
+                          offer: widget.model.offer!.toString(),
+                          name: widget.model.name.toString(),
+                          image: widget.model.image.toString(),
+                          categoryID: widget.categoryID.toString(),
+                          totalQuantity: widget.model.inventory!,
+                          product: Product(
+                            id: widget.model.id,
+                            name: widget.model.name,
+                            price: widget.model.price,
+                            image: widget.model.image,
+                            images: widget.model.images,
+                            description: widget.model.description,
+                            inventory: widget.model.inventory,
+                            status: widget.model.status,
+                            crossSellingProducts:
+                                widget.model.crossSellingProducts!,
+                            sku: widget.model.sku,
+                            offer: widget.model.offer,
+                            salePrice: widget.model.salePrice,
+                          ),
+                          price: widget.model.offer == 1
+                              ? widget.model.salePrice.toString()
+                              : widget.model.price.toString(),
+                          quantity: 1));
+                      addToCartFlushBar(context,
+                          title: 'Item has been added to cart.');
+                    },
+                    text: 'ADD TO CART'),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: SizedBox(
+                  height: 56,
+                  // width: MediaQuery.of(context).size.width,
+                  child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(0),
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(
+                                color: Color(0x40000000),
+                                //shadow for button
+                                blurRadius: 4) //blur radius of shadow
+                          ]),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              disabledForegroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              )
+                              //make color or elevated button transparent
+                              ),
+                          onPressed: () {
+                            Share.share(
+                                buildDynamicLinks(widget.model.id.toString()));
+                          },
+                          child: Icon(
+                            Icons.share,
+                            color: Colors.white,
+                          ))),
+                ),
+              )
+            ],
+          ),
           const SizedBox(height: 20),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -448,7 +493,7 @@ class _ItemDetailsViewBodyState extends State<ItemDetailsViewBody> {
                                                       child: Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .symmetric(
+                                                                .symmetric(
                                                                 vertical: 5),
                                                         child: Row(
                                                           mainAxisAlignment:
@@ -490,8 +535,7 @@ class _ItemDetailsViewBodyState extends State<ItemDetailsViewBody> {
                                                         fontSize: 16,
                                                         fontWeight:
                                                             FontWeight.w600,
-                                                        color:
-                                                           Colors.black),
+                                                        color: Colors.black),
                                                   ),
                                                 ],
                                               )

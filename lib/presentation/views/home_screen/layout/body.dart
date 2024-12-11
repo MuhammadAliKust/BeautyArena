@@ -102,11 +102,11 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                         imageUrl: value.data![0].image.toString(),
                         fit: BoxFit.fill,
                         placeholder: (context, url) => Image.asset(
-                          'assets/images/user_ph.jpeg',
+                          'assets/images/ad_pg.jpg',
                           fit: BoxFit.cover,
                         ),
                         errorWidget: (context, url, error) => Image.asset(
-                          'assets/images/user_ph.jpeg',
+                          'assets/images/ad_pg.jpg',
                           fit: BoxFit.cover,
                         ),
                       ),

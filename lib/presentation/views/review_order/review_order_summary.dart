@@ -411,7 +411,7 @@ class _ReviewOrderSummaryViewState extends State<ReviewOrderSummaryView> {
                       width: 10,
                     ),
                     Text(
-                      "₪$discount",
+                      "₪${discount.toStringAsFixed(2)}",
                       style: TextStyle(fontSize: 17, color: Color(0xff25B700)),
                     ),
                   ],

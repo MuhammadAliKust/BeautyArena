@@ -223,6 +223,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                               const SizedBox(height: 20),
                               AppButtonPrimary(
                                   onTap: () async {
+
                                     if (_nameController.text.isEmpty) {
                                       getFlushBar(context,
                                           title: 'Name cannot be empty.');

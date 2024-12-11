@@ -424,6 +424,10 @@ class _MarinaViewState extends State<MarinaView> {
                                     ),
                                     IconButton(
                                       onPressed: () {
+                                        if(getSelectedProductsList(model!.data![0])[i].outOfStock == 1){
+                                          getFlushBar(context, title: 'The product is out of stock and can’t be added to cart.');
+                                          return;
+                                        }
                                         cart.addItem(CartModel(
                                             id: getSelectedProductsList(model!.data![0])[i]
                                                 .id

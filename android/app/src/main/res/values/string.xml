@@ -1,0 +1,8 @@
+<resources>
+    <string name="branch_io_sdk_live_key">key_live_kEkR5Sc0Sk1DZmrkXYjnccdeuAgOizJ0</string>
+    <string name="branch_io_sdk_test_key">key_test_fDcQ5LkZGk4wXisa68dggpikwxcGcrII</string>
+    <string name="deeplink_link">ymy5a.app.link</string>
+    <string name="deeplink_alternate_link">ymy5a-alternate.app.link</string>
+    <string name="deeplink_test_link">app.beautyarena.ps</string>
+    <string name="deeplink_alternate_test_link">ymy5a-alternate.test-app.link</string>
+</resources>
